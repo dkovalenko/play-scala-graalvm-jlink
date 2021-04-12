@@ -19,7 +19,7 @@ drwxr-xr-x   3 dmitriy  staff    96 Apr  9 17:47 share
 ```
 To simplify stage + run process you can run
 `sbt runProd`.
-
+then go to `http://localhost:9000/graal`
 
 Stage result for different JVM:
 - AdoptOpenJDK 11.0.9.hs: Build ok. Application is working properly.

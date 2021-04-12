@@ -52,8 +52,8 @@ jlinkModulePath := {
     .filter { item =>
       item.get(moduleID.key).exists { modId =>
         modId.name == "paranamer"
-      } 
-      //|| item.data.toString().contains("javax.activation")
+      } || 
+      item.data.toString().contains("icu4j")
     }
     .map(_.data)
 }
