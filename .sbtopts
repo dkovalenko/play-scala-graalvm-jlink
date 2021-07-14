@@ -1,3 +1,6 @@
 -J-XX:MaxMetaspaceSize=1024M
 -J-Xmx2500M
 -J-Xss2M
+-J-XX:+UnlockExperimentalVMOptions
+-J-XX:+EnableJVMCI
+-J-XX:+UseJVMCICompiler

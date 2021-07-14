@@ -2,7 +2,6 @@ name := """play-scala-graalvm-jlink"""
 organization := "com.example"
 
 version := "1.0-SNAPSHOT"
-
 lazy val root = (project in file(".")).enablePlugins(PlayScala, JlinkPlugin)
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -14,9 +13,9 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0
 
 val isGraalVM = System.getProperty("java.vendor.version").contains("GraalVM")
 
-val graalVersion = "21.0.0.2"
+val graalVersion = "21.1.0"
 libraryDependencies ++= (
-  if (isGraalVM) {
+  if (isGraalVM && false) {
     Seq.empty
   } else
     Seq(
@@ -30,24 +29,36 @@ libraryDependencies ++= (
 jlinkOptions ++= Seq(
   "--no-header-files",
   "--no-man-pages",
-  "--compress=2"
+  "--compress=2",
 )
 
 jlinkModules ++= Seq(
   "jdk.crypto.ec",
   "jdk.unsupported",
-  "jdk.jdwp.agent"
+  "jdk.jdwp.agent",
+  "java.management",
+  "java.logging",
+  "org.graalvm.truffle",
+  "jdk.internal.vm.ci",
+  "jdk.internal.vm.compiler",
+  "org.graalvm.sdk",
 )
+
 fullClasspath in jlinkBuildImage := {
-      (fullClasspath in Compile).value
+      (Compile/fullClasspath).value
         .filterNot { clazz =>
-          clazz.data.toString().contains("log4j-api")
+          clazz.data.toString().contains("log4j-api") ||
+          clazz.data.getPath().contains("graal-sdk") ||
+          clazz.data.getPath().contains("truffle-api") ||
+          clazz.data.getPath().contains("chromeinspector") ||
+          clazz.data.getPath().contains("regex") ||
+          clazz.data.getPath().contains("graalvm/tools/profiler") ||
+          clazz.data.getPath().contains("graalvm/js")
         }
     }
 
 jlinkModulePath := {
-  fullClasspath
-    .in(jlinkBuildImage)
+  (Compile / fullClasspath)
     .value
     .filter { item =>
       item.get(moduleID.key).exists { modId =>
